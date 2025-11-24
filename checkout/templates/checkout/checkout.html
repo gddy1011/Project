@@ -9,6 +9,7 @@
         body { background: #fafafa; font-family: 'Inter', sans-serif; }
         .container { max-width: 500px; margin-top: 50px; }
         .btn-pay { background: #28a745; color: white; }
+        #mpesaResponse { margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -17,32 +18,64 @@
     <p>Amount to pay: <strong>KES {{ package.price }}</strong></p>
 
     <form id="checkoutForm">
+        {% csrf_token %}
         <div class="mb-3">
             <label for="phone" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="phone" name="phone"
+            <input type="tel" class="form-control" id="phone" name="phone" required
                    pattern="(^0[17][0-9]{8}$|^254[0-9]{9}$|^\+254[0-9]{9}$)"
-                   placeholder="07XXXXXXXX or 01XXXXXXXX or 254XXXXXXXXX or +254XXXXXXXXX"
-                   required>
-            <small class="text-muted">Enter the phone number you will use for payment</small>
+                   placeholder="07XXXXXXXX or 01XXXXXXXX or 254XXXXXXXXX or +254XXXXXXXXX">
         </div>
-
         <button type="submit" class="btn btn-pay w-100">Proceed to Pay</button>
     </form>
+
+    <div id="mpesaResponse"></div>
 </div>
 
 <script>
-document.getElementById('checkoutForm').addEventListener('submit', function(e){
+document.getElementById("checkoutForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-    const phone = document.getElementById('phone').value;
-    if (!phone.match(/(^0[17][0-9]{8}$|^254[0-9]{9}$|^\+254[0-9]{9}$)/)) {
-        alert("Invalid phone number format!");
-        return;
+    const phone = document.getElementById("phone").value;
+    const amount = "{{ package.price }}";
+    const csrfToken = "{{ csrf_token }}";
+
+    const formData = new FormData();
+    formData.append("phone_number", phone);
+    formData.append("amount", amount);
+
+    const responseDiv = document.getElementById("mpesaResponse");
+    responseDiv.innerHTML = "Processing payment...";
+
+    try {
+        const response = await fetch("{% url 'mpesa_pay' %}", {
+            method: "POST",
+            headers: { "X-CSRFToken": csrfToken },
+            body: formData
+        });
+        const data = await response.json();
+
+        if(data.CheckoutRequestID){
+            responseDiv.innerHTML = "Payment prompt sent! Check your phone...";
+            
+            const interval = setInterval(async () => {
+                const statusResponse = await fetch(`/mpesa/status/${data.CheckoutRequestID}/`);
+                const statusData = await statusResponse.json();
+
+                if(statusData.status === "Success"){
+                    clearInterval(interval);
+                    window.location.href = "{% url 'payment_success' %}";
+                } else if(statusData.status === "Failed"){
+                    clearInterval(interval);
+                    window.location.href = "{% url 'payment_failure' %}";
+                }
+            }, 5000);
+
+        } else {
+            responseDiv.innerHTML = JSON.stringify(data);
+        }
+    } catch (error) {
+        responseDiv.innerHTML = "Error: " + error;
     }
-    // For now just simulate payment success
-    window.location.href = "{% url 'checkout:success' package.id %}";
 });
 </script>
 </body>
 </html>
-
-

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from decouple import config
 
 load_dotenv()  # Loads variables from .env file
 
@@ -19,6 +20,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
+
+
+MPESA_CONSUMER_KEY = config("MPESA_CONSUMER_KEY")
+MPESA_CONSUMER_SECRET = config("MPESA_CONSUMER_SECRET")
+MPESA_SHORTCODE = config("MPESA_SHORTCODE")
+MPESA_PASSKEY = config("MPESA_PASSKEY")
+MPESA_CALLBACK_URL = config("MPESA_CALLBACK_URL")
 
 
 
