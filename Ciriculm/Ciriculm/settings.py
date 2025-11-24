@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'forms',
     'subscription',
     'checkout'
+    'mpesa'
 ]
 
 MIDDLEWARE = [
