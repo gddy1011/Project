@@ -57,8 +57,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'forms',
     'subscription',
-    'checkout'
-    'mpesa'
+    'checkout',
+    'mpesa',
 ]
 
 MIDDLEWARE = [
