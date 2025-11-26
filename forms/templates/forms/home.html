@@ -10,7 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    body { background:#f7f9fb; font-family: 'Inter', sans-serif; }
+    body { background:brown; font-family: 'Inter', sans-serif; }
     .card { border-radius: .75rem; }
     .section-header { font-weight:600; }
     .field-box { border:1px solid #e6e9ee; padding:12px; border-radius:6px; background:#fff; }
@@ -18,6 +18,7 @@
     .clickable { cursor: pointer; }
     .avatar-preview { width:96px; height:96px; object-fit:cover; border-radius:8px; border:1px solid #e6e9ee; }
     .add-btn { color:#0d6efd; cursor:pointer; }
+    .job-link { font-size:0.9rem; color:#6c757d; margin-top:0.25rem; }
   </style>
 </head>
 <body>
@@ -63,6 +64,11 @@
                 <div class="col-md-6">
                   <label class="form-label">Postal code</label>
                   <input id="postal_code" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label">Job advert link</label>
+                  <input id="job_link" type="url" class="form-control" placeholder="Paste the URL of the job you are applying for" />
+                  <div class="job-link">Make sure the URL starts with http:// or https://</div>
                 </div>
               </div>
             </div>
@@ -178,6 +184,7 @@ document.getElementById('previewBtn').onclick = ()=>{
   preview += `Name: ${document.getElementById('given_name').value} ${document.getElementById('family_name').value}\n`;
   preview += `Phone: ${document.getElementById('phone').value}, Email: ${document.getElementById('email').value}\n`;
   preview += `Address: ${document.getElementById('address').value}, Postal: ${document.getElementById('postal_code').value}\n`;
+  preview += `Job advert link: ${document.getElementById('job_link').value}\n`;
   preview += `Career goals:\n${document.getElementById('career_goals').value}\n`;
   preview += `Work Experience:\n`;
   document.querySelectorAll('#workExpList > div').forEach(d=>{
@@ -194,12 +201,18 @@ document.getElementById('previewBtn').onclick = ()=>{
 
 // LocalStorage
 document.getElementById('saveLocal').onclick = ()=>{
-  const data = {given_name:document.getElementById('given_name').value,family_name:document.getElementById('family_name').value,
-  phone:document.getElementById('phone').value,email:document.getElementById('email').value,address:document.getElementById('address').value,
-  postal_code:document.getElementById('postal_code').value,career_goals:document.getElementById('career_goals').value,
-  work:Array.from(document.querySelectorAll('#workExpList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{ })),
-  edu:Array.from(document.querySelectorAll('#eduList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
-  instructions:document.getElementById('instructions').value
+  const data = {
+    given_name: document.getElementById('given_name').value,
+    family_name: document.getElementById('family_name').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    address: document.getElementById('address').value,
+    postal_code: document.getElementById('postal_code').value,
+    job_link: document.getElementById('job_link').value,
+    career_goals: document.getElementById('career_goals').value,
+    work: Array.from(document.querySelectorAll('#workExpList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
+    edu: Array.from(document.querySelectorAll('#eduList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
+    instructions: document.getElementById('instructions').value
   };
   localStorage.setItem('cv_form', JSON.stringify(data));
   alert('Saved locally!');
@@ -219,6 +232,7 @@ window.onload = ()=>{
     document.getElementById('email').value = saved.email||'';
     document.getElementById('address').value = saved.address||'';
     document.getElementById('postal_code').value = saved.postal_code||'';
+    document.getElementById('job_link').value = saved.job_link||'';
     document.getElementById('career_goals').value = saved.career_goals||'';
     document.getElementById('instructions').value = saved.instructions||'';
     if(saved.work) saved.work.forEach(d=>createWorkBlock(d));
@@ -235,12 +249,18 @@ document.getElementById('photoFile').onchange = e=>{
 
 // Submit AJAX
 document.getElementById('submitBtn').onclick = ()=>{
-  const data = {given_name:document.getElementById('given_name').value,family_name:document.getElementById('family_name').value,
-  phone:document.getElementById('phone').value,email:document.getElementById('email').value,address:document.getElementById('address').value,
-  postal_code:document.getElementById('postal_code').value,career_goals:document.getElementById('career_goals').value,
-  work:Array.from(document.querySelectorAll('#workExpList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{ })),
-  edu:Array.from(document.querySelectorAll('#eduList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
-  instructions:document.getElementById('instructions').value
+  const data = {
+    given_name: document.getElementById('given_name').value,
+    family_name: document.getElementById('family_name').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    address: document.getElementById('address').value,
+    postal_code: document.getElementById('postal_code').value,
+    job_link: document.getElementById('job_link').value,
+    career_goals: document.getElementById('career_goals').value,
+    work: Array.from(document.querySelectorAll('#workExpList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
+    edu: Array.from(document.querySelectorAll('#eduList > div')).map(d=>Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{o[f.placeholder.toLowerCase().split(' ')[0]]=f.value;return o;},{})),
+    instructions: document.getElementById('instructions').value
   };
   fetch('{% url "forms:submit_cv" %}',{
     method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}
