@@ -1,10 +1,14 @@
+# forms/urls.py
+
 from django.urls import path
 from . import views
 
 app_name = 'forms'
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Homepage
-    path('submit_cv/', views.submit_cv, name='submit_cv'),
-    path('extract_cv/', views.extract_cv, name='extract_cv'),
+    # Homepage (e.g., accessed via http://127.0.0.1:8000/)
+    path('', views.home, name='home'),             
+    # API endpoints
+    path('api/submit/cv/', views.submit_cv, name='submit_cv_api'),
+    path('api/extract/cv/', views.extract_cv, name='extract_cv_api'),
 ]
