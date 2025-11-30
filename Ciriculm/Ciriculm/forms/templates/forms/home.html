@@ -1,0 +1,372 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV Submission</title>
+
+<link rel="icon" href="data:;base64,=">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+/* 1. Global & Variables */
+:root {
+--apple-bg: #f5f5f7;
+--apple-card: #ffffff;
+--apple-text: #1d1d1f;
+--apple-gray: #86868b;
+--apple-blue: #0071e3;
+--apple-border: #d2d2d7;
+--apple-focus: rgba(0, 113, 227, 0.2);
+}
+
+body {
+background-color: var(--apple-bg);
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+color: var(--apple-text);
+-webkit-font-smoothing: antialiased;
+}
+
+.apple-card {
+background: var(--apple-card);
+border-radius: 20px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+border: 1px solid rgba(0,0,0,0.02);
+padding: 40px;
+max-width: 800px;
+margin: 0 auto;
+}
+
+/* Logo & Footer Styles */
+.logo-container {
+text-align: center;
+margin-bottom: 25px;
+}
+.logo-container img {
+max-height: 40px;
+width: auto;
+display: block;
+margin: 0 auto;
+}
+.app-footer {
+margin-top: 30px;
+padding-top: 20px;
+text-align: center;
+color: var(--apple-gray);
+font-size: 12px;
+}
+/* Input & Labels */
+.form-label {
+font-size: 13px;
+font-weight: 500;
+color: var(--apple-gray);
+margin-bottom: 6px;
+}
+.form-control {
+border-radius: 10px;
+border: 1px solid var(--apple-border);
+padding: 10px 12px;
+font-size: 15px;
+}
+.dynamic-block {
+background: #fbfbfd;
+border: 1px solid #e5e5e5;
+border-radius: 12px;
+padding: 15px;
+margin-bottom: 10px;
+}
+.add-btn { color: var(--apple-blue); cursor: pointer; font-weight: 500; }
+.section-header { font-weight: 600; padding-bottom: 5px; border-bottom: 1px solid #e5e5e5; }
+</style>
+</head>
+<body>
+
+<div class="container py-5">
+<div class="apple-card">
+<div class="logo-container">
+<img src="{% static 'img/NUBIAN logo.png' %}" alt="Nubian CV Writers Logo">
+</div>
+
+<h3 class="text-center">CV Submission</h3>
+
+<div class="mb-5">
+<div class="section-header">Personal Details</div>
+<div class="row g-3">
+<div class="col-md-12">
+<label class="form-label">Profile Photo (Optional)</label>
+<input id="photoFile" type="file" accept="image/*" class="form-control" />
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Given Name</label>
+<input id="given_name" class="form-control" placeholder="Jane" />
+</div>
+<div class="col-md-6">
+<label class="form-label">Family Name</label>
+<input id="family_name" class="form-control" placeholder="Doe" />
+</div>
+<div class="col-md-6">
+<label class="form-label">Phone</label>
+<input id="phone" class="form-control" placeholder="07xx xxx xxx" />
+</div>
+<div class="col-md-6">
+<label class="form-label">Email</label>
+<input id="email" class="form-control" type="email" placeholder="jane@example.com" />
+</div>
+<div class="col-md-6">
+<label class="form-label">Address</label>
+<input id="address" class="form-control" />
+</div>
+<div class="col-md-6">
+<label class="form-label">Postal Code</label>
+<input id="postal_code" class="form-control" />
+</div>
+<div class="col-12 mt-3">
+<label class="form-label text-primary">Target Job / LinkedIn Profile</label>
+<input id="job_link" class="form-control" type="url" placeholder="https://linkedin.com/in/... or https://job-board.com/..." />
+</div>
+
+</div>
+</div>
+<hr/>
+
+<div class="mb-5">
+<div class="section-header">Career Goals</div>
+<textarea id="career_goals" class="form-control" rows="3" placeholder="Summarize the role you are targeting and your professional objectives..."></textarea>
+</div>
+<hr/>
+
+<div class="mb-5">
+<div class="section-header d-flex justify-content-between">
+<span>Work Experience</span>
+<span class="badge bg-secondary rounded-pill" id="weCount">1</span>
+</div>
+<div id="workExpList"></div>
+<div class="mt-3"><a class="add-btn" id="addWork">+ Add work experience</a></div>
+</div>
+<hr/>
+
+<div class="mb-5">
+<div class="section-header d-flex justify-content-between">
+<span>Education</span>
+<span class="badge bg-secondary rounded-pill" id="edCount">1</span>
+</div>
+<div id="eduList"></div>
+<div class="mt-3"><a class="add-btn" id="addEdu">+ Add education</a></div>
+</div>
+<hr/>
+
+<div class="mb-5">
+<div class="section-header">Additional Information</div>
+<textarea id="instructions" class="form-control" rows="3" placeholder="Any special instructions or cover letter details..."></textarea>
+</div>
+<hr/>
+
+<div class="d-flex flex-wrap gap-2 pt-3">
+<button id="saveLocal" class="btn btn-outline-secondary btn-sm">Save Draft</button>
+<button id="clearLocal" class="btn btn-outline-danger btn-sm">Clear</button>
+<div class="ms-auto d-flex gap-2">
+<button id="previewBtn" class="btn btn-light border">Preview</button>
+<button id="submitBtn" class="btn btn-primary px-4">Submit Application</button>
+</div>
+</div>
+</div>
+<div class="app-footer">
+&copy; Nubian CV writers 2025
+</div>
+</div>
+
+<div class="modal fade" id="previewModal" tabindex="-1">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+<div class="modal-content" style="border-radius: 18px;">
+<div class="modal-header border-bottom-0">
+<h5 class="modal-title fw-bold">Preview</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body bg-light p-4" style="font-family: monospace; font-size: 13px;">
+<div id="previewBody" style="white-space:pre-wrap; background:white; padding:20px; border-radius:12px; border:1px solid #e5e5e5;"></div>
+</div>
+<div class="modal-footer border-top-0">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let weCount = 0, edCount = 0;
+
+const mkInput = (ph, val) => `<input class="form-control mb-2" placeholder="${ph}" value="${val||''}">`;
+
+function createWorkBlock(data={}) {
+weCount++;
+document.getElementById('weCount').textContent = weCount;
+const div = document.createElement('div');
+div.className = "dynamic-block";
+div.innerHTML = `
+<div class="row g-2">
+<div class="col-md-6">${mkInput('Position', data.position)}</div>
+<div class="col-md-6">${mkInput('Company', data.company)}</div>
+<div class="col-md-6">${mkInput('Start Date', data.start_date)}</div>
+<div class="col-md-6">${mkInput('End Date', data.end_date)}</div>
+<div class="col-12"><textarea class="form-control mb-2" placeholder="Description of duties...">${data.description || ''}</textarea></div>
+</div>
+<div class="text-end"><button type="button" class="btn btn-link text-danger text-decoration-none btn-sm remove-btn" style="font-size:12px;">Remove</button></div>`;
+div.querySelector('.remove-btn').onclick = () => { div.remove(); weCount = document.querySelectorAll('#workExpList > div').length; document.getElementById('weCount').textContent = weCount || 0; };
+document.getElementById('workExpList').appendChild(div);
+}
+
+function createEduBlock(data={}) {
+edCount++;
+document.getElementById('edCount').textContent = edCount;
+const div = document.createElement('div');
+div.className = "dynamic-block";
+div.innerHTML = `
+<div class="row g-2">
+<div class="col-md-6">${mkInput('Degree', data.degree)}</div>
+<div class="col-md-6">${mkInput('Institution', data.institution)}</div>
+<div class="col-md-6">${mkInput('Start Date', data.start_date)}</div>
+<div class="col-md-6">${mkInput('End Date', data.end_date)}</div>
+<div class="col-12"><textarea class="form-control mb-2" placeholder="Description (Honors, etc)...">${data.description || ''}</textarea></div>
+</div>
+<div class="text-end"><button type="button" class="btn btn-link text-danger text-decoration-none btn-sm remove-btn" style="font-size:12px;">Remove</button></div>`;
+div.querySelector('.remove-btn').onclick = () => { div.remove(); edCount = document.querySelectorAll('#eduList > div').length; document.getElementById('edCount').textContent = edCount || 0; };
+document.getElementById('eduList').appendChild(div);
+}
+
+document.getElementById('addWork').onclick = ()=>createWorkBlock();
+document.getElementById('addEdu').onclick = ()=>createEduBlock();
+
+const getDataObj = () => {
+return {
+given_name: document.getElementById('given_name').value,
+family_name: document.getElementById('family_name').value,
+phone: document.getElementById('phone').value,
+email: document.getElementById('email').value,
+address: document.getElementById('address').value,
+postal_code: document.getElementById('postal_code').value,
+job_link: document.getElementById('job_link').value,
+career_goals: document.getElementById('career_goals').value,
+work: Array.from(document.querySelectorAll('#workExpList > div')).map(d =>
+Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{
+let key = f.placeholder.toLowerCase().replace(' ','_');
+if(key.includes('description')) key = 'description';
+o[key] = f.value;
+return o;
+}, {})
+),
+edu: Array.from(document.querySelectorAll('#eduList > div')).map(d =>
+Array.from(d.querySelectorAll('input,textarea')).reduce((o,f)=>{
+let key = f.placeholder.toLowerCase().replace(' ','_');
+if(key.includes('description')) key = 'description';
+o[key] = f.value;
+return o;
+}, {})
+),
+instructions: document.getElementById('instructions').value
+};
+};
+
+function loadFromLocal() {
+const saved = JSON.parse(localStorage.getItem('cv_form_minimal') || '{}');
+if(Object.keys(saved).length){
+['given_name','family_name','phone','email','address','postal_code','job_link','career_goals','instructions']
+.forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = saved[id]||''; });
+
+if(saved.work && saved.work.length) saved.work.forEach(d=>createWorkBlock(d));
+else createWorkBlock();
+
+if(saved.edu && saved.edu.length) saved.edu.forEach(d=>createEduBlock(d));
+else createEduBlock();
+}
+}
+
+window.onload = () => {
+if (!localStorage.getItem('cv_form_minimal')) {
+createWorkBlock();
+createEduBlock();
+} else {
+loadFromLocal();
+}
+};
+
+document.getElementById('saveLocal').onclick = () => {
+localStorage.setItem('cv_form_minimal', JSON.stringify(getDataObj()));
+const btn = document.getElementById('saveLocal');
+const original = btn.textContent;
+btn.textContent = "Saved!";
+setTimeout(() => btn.textContent = original, 1500);
+};
+
+document.getElementById('clearLocal').onclick = () => {
+if(confirm("Are you sure you want to clear all saved progress?")) {
+localStorage.removeItem('cv_form_minimal');
+location.reload();
+}
+};
+
+document.getElementById('previewBtn').onclick = () => {
+let preview = '--- FORM DATA PREVIEW ---\n\n';
+const data = getDataObj();
+preview += `NAME: ${data.given_name} ${data.family_name}\n`;
+preview += `CONTACT: ${data.phone} | ${data.email}\n`;
+preview += `--------------------------------------------------\n`;
+preview += `CAREER GOALS:\n${data.career_goals}\n\n`;
+
+preview += `WORK EXPERIENCE (${data.work.length}):\n`;
+data.work.forEach((w, i) => {
+preview += `- ${w.position} at ${w.company}\n`;
+});
+preview += `\n`;
+
+preview += `EDUCATION (${data.edu.length}):\n`;
+data.edu.forEach((e, i) => {
+preview += `- ${e.degree} from ${e.institution}\n`;
+});
+preview += `\n`;
+document.getElementById('previewBody').textContent = preview;
+new bootstrap.Modal(document.getElementById('previewModal')).show();
+};
+
+document.getElementById('submitBtn').onclick = () => {
+const btn = document.getElementById('submitBtn');
+btn.disabled = true;
+btn.textContent = "Sending...";
+
+fetch('/api/submit/cv/', {
+method: 'POST',
+body: JSON.stringify(getDataObj()),
+headers: {
+'Content-Type': 'application/json',
+}
+}).then(r => r.json()).then(res => {
+// Looks for 'redirect_url' from the server
+if(res.status == 'success'){
+if (res.redirect_url) {
+// Success: Redirect to checkout URL provided by the server
+window.location.href = res.redirect_url;
+} else {
+// Error if server didn't send the expected key
+alert("Submission successful, but failed to get redirect link. Check server response.");
+}
+} else {
+// Handle server-side errors
+alert(res.message || 'Error submitting form. Check network logs.');
+btn.disabled = false;
+btn.textContent = "Submit Application";
+}
+}).catch(e => {
+// Handle network errors (404, server down, etc.)
+console.error("Fetch Error:", e);
+alert('Network error. Check console for details.');
+btn.disabled = false;
+btn.textContent = "Submit Application";
+});
+};
+</script>
+
+</body>
+</html>

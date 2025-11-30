@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CV Packages</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body {
+background: #fafafa;
+font-family: 'Inter', sans-serif;
+min-height: 100vh; /* Ensure body takes full viewport height */
+display: flex;
+flex-direction: column;
+}
+.content-wrapper {
+    flex-grow: 1; /* Allows content to push the footer down */
+}
+.package-card {
+border-radius: 25px;
+padding: 30px;
+min-height: 420px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+transition: transform .2s ease;
+}
+.package-card:hover {
+transform: translateY(-6px);
+}
+.price-btn {
+background: #b0b0b0;
+border-radius: 10px;
+padding: 10px 0;
+text-align: center;
+color: black;
+font-weight: 600;
+text-decoration: none;
+display: block;
+}
+/* New Footer Style */
+.app-footer {
+    background-color: #e9e9e9; /* Light gray background */
+    padding: 20px 0;
+    margin-top: auto; /* Pushes the footer to the bottom */
+    color: #6c757d; /* Muted text color */
+    font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="content-wrapper container py-5">
+<h2 class="text-center mb-4">Choose Your CV Package</h2>
+
+{% if cv_data_present %}
+    <div class="alert alert-success text-center mb-5">
+        ✅ **Application Data Secured!** Your CV details are saved. Please select a package to proceed.
+    </div>
+{% else %}
+    <div class="alert alert-warning text-center mb-5">
+        ⚠️ **Warning:** Could not retrieve your CV details from the session. Please go back and resubmit the form if necessary.
+    </div>
+{% endif %}
+
+
+<div class="row g-4 justify-content-center">
+
+{% for p in packages %}
+<div class="col-md-4 col-sm-12">
+<div class="package-card"
+style="background:
+{% if p.name == 'Basic CV' %}#e6e5e5
+{% elif p.name == 'Professional CV' %}#f9d8b4
+{% elif p.name == 'Basic Plan' %}#e6e5e5
+{% elif p.name == 'Premium Plan' %}#f9d8b4
+{% else %}#f2a077{% endif %};">
+
+<h3 class="text-center fw-bold">{{ p.name }}</h3>
+
+<ul class="mt-3">
+{% for line in p.description.splitlines %}
+<li class="mb-2">{{ line }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'checkout:checkout' p.id %}" class="price-btn mt-4">
+KES {{ p.price }}
+</a>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+
+<footer class="app-footer">
+    <div class="container text-center">
+        &copy; 2025 Nubian CV Writers. All rights reserved. | <a href="#" class="text-secondary text-decoration-none">Terms of Service</a> | <a href="#" class="text-secondary text-decoration-none">Privacy Policy</a>
+    </div>
+</footer>
+</body>
+</html>

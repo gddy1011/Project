@@ -6,9 +6,6 @@ urlpatterns = [
     path('', include('forms.urls', namespace='forms')),
     path('subscription/', include('subscription.urls', namespace='subscription')),
     path('checkout/', include('checkout.urls', namespace='checkout')),
-    path('mpesa/', include('mpesa.urls')),
-    path('subscription/', include('subscription.urls', namespace='subscription')),
-   
 ]
 
 
